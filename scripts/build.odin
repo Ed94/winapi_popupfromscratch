@@ -94,7 +94,8 @@ exe_odin :: "odin.exe"
 
 path_root   := get_working_dir()
 path_build  := join_path({path_root,  "build"})
-file_source := join_path({path_root,  "winapi_pfs.odin"})
+path_code   := join_path({path_root,  "code"})
+file_source := join_path({path_code,  "winapi_pfs.odin"})
 file_exe    := join_path({path_build, "winapi_pfs.exe"})
 
 res := build(path_build, {

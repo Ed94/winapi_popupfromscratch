@@ -1,5 +1,6 @@
 $path_root  = split-path -Path $PSScriptRoot -Parent
 $path_build = join-path $path_root 'build'
+$path_code  = join-path $path_root 'code'
 
 $path_source = join-path $PSScriptRoot 'build.odin'
 $exe         = join-path $path_build   'build_win32.exe'
@@ -29,3 +30,6 @@ $build_args += $flag_output_path + $exe
 & $exe
 pop-location
 
+# push-location $path_code
+# & $exe
+# pop-location
