@@ -1,4 +1,4 @@
-package build_win32
+package build
 
 //region Script Grime
 import mem "core:mem"
@@ -10,14 +10,14 @@ import _strings "core:strings"
 	strgen_init :: _strings.builder_init
 	strgen_join :: _strings.join
 
-join_str :: #force_inline proc(elems  : []string) -> string { 
+join_path       :: #force_inline proc(elems : ..string) -> string { res, _ := os.join_path(transmute([]string)elems, context.allocator); return transmute(string)res }
+get_working_dir :: #force_inline proc()                 -> string { res, _ := os.get_working_directory(context.allocator);               return transmute(string)res }
+
+join_str :: #force_inline proc(elems  : ..string) -> string { 
 	gen : StrGen; strgen_init(& gen, context.allocator)
 	res, _ := strgen_join(elems, "")
 	return res
 }
-	
-join_path       :: #force_inline proc(elems : []string) -> string { res, _ := os.join_path(elems, context.allocator);      return res }
-get_working_dir :: #force_inline proc()                 -> string { res, _ := os.get_working_directory(context.allocator); return res }
 
 // For a beakdown of any flag, type <odin_compiler> <command> -help
 command_build  :: "build"
@@ -81,10 +81,10 @@ flag_msvc_link_debug                :: "/DEBUG"
 msvc_link_default_base_address :: 0x180000000
 //endregion Script Grime
 
-build :: proc(working_dir : string, args : []string) -> (stdout : string) { 
+build :: proc(working_dir : string, args : []string) -> (stdout : string, stderr : string) { 
 	fmt.println("Building:", args)
-	res : []byte; _, res, _, _ = os.process_exec({ working_dir = working_dir, command = args}, context.allocator)
-	return transmute(string)res;
+	res, errs : []byte; _, res, errs, _ = os.process_exec({ working_dir = working_dir, command = args}, context.allocator)
+	return transmute(string)res, transmute(string)errs;
 }
 
 main :: proc() {
@@ -93,21 +93,23 @@ varena : vmem.Arena; _ = vmem.arena_init_growing(& varena, mem.Megabyte * 64 ); 
 exe_odin :: "odin.exe"
 
 path_root   := get_working_dir()
-path_build  := join_path({path_root,  "build"})
-path_code   := join_path({path_root,  "code"})
-file_source := join_path({path_code,  "winapi_pfs.odin"})
-file_exe    := join_path({path_build, "winapi_pfs.exe"})
+path_build  := join_path(path_root,  "build")
+path_code   := join_path(path_root,  "code")
+file_source := join_path(path_code,  "winapi_pfs.odin")
+file_exe    := join_path(path_build, "winapi_pfs.exe")
 
-res := build(path_build, {
+res, errs := build(path_build, {
 	exe_odin,
 	command_build,
 	file_source,
 	flag_file,
-	join_str({flag_output_path, file_exe}),
+	join_str(flag_output_path, file_exe),
 	flag_optimize_none,
 	flag_debug,
 	flag_show_timings,
+	join_str(flag_subsystem, "windows"),
 })
-fmt.println(transmute(string)res)
+fmt.println(res)
+fmt.println(errs)
 // ------------------------------------------------------------- PROGRAM END
 }
