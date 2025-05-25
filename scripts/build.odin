@@ -72,6 +72,10 @@ flag_vet_semicolon             :: "-vet-semicolon"
 flag_vet_shadow_vars           :: "-vet-shadowing"
 flag_vet_using_stmt            :: "-vet-using-stmt"
 
+flag_microarch_zen5 :: "--microarch:znver5"
+
+flag_rad_linker :: "-radlink"
+
 flag_msvc_link_disable_dynamic_base :: "/DYNAMICBASE:NO"
 flag_msvc_link_base_address         :: "/BASE:"
 flag_msvc_link_fixed_base_address   :: "/FIXED"
@@ -88,28 +92,30 @@ build :: proc(working_dir : string, args : []string) -> (stdout : string, stderr
 }
 
 main :: proc() {
-// ------------------------------------------------------------ PROGRAM START
-varena : vmem.Arena; _ = vmem.arena_init_growing(& varena, mem.Megabyte * 64 ); context.allocator = vmem.arena_allocator(& varena)
-exe_odin :: "odin.exe"
+	varena : vmem.Arena; _ = vmem.arena_init_growing(& varena, mem.Megabyte * 64 ); context.allocator = vmem.arena_allocator(& varena)
+	exe_odin :: "odin.exe"
 
-path_root   := get_working_dir()
-path_build  := join_path(path_root,  "build")
-path_code   := join_path(path_root,  "code")
-file_source := join_path(path_code,  "winapi_pfs.odin")
-file_exe    := join_path(path_build, "winapi_pfs.exe")
+	path_root   := get_working_dir()
+	path_build  := join_path(path_root,  "build")
+	path_code   := join_path(path_root,  "code")
+	file_source := join_path(path_code,  "winapi_pfs.odin")
+	file_exe    := join_path(path_build, "winapi_pfs.exe")
 
-res, errs := build(path_build, {
-	exe_odin,
-	command_build,
-	file_source,
-	flag_file,
-	join_str(flag_output_path, file_exe),
-	flag_optimize_none,
-	flag_debug,
-	flag_show_timings,
-	join_str(flag_subsystem, "windows"),
-})
-fmt.println(res)
-fmt.println(errs)
-// ------------------------------------------------------------- PROGRAM END
+	res, errs := build(path_build, {
+		exe_odin,
+		command_build,
+		file_source,
+		flag_file,
+		join_str(flag_output_path, file_exe),
+		flag_optimize_none,
+		flag_default_allocator_nil,
+		flag_debug,
+		flag_microarch_zen5,
+		flag_rad_linker,
+		flag_no_thread_checker,
+		flag_show_timings,
+		join_str(flag_subsystem, "windows"),
+	})
+	fmt.println(res)
+	fmt.println(errs)
 }

@@ -172,7 +172,16 @@ PE_Context :: struct {
 init_context :: proc(ctx: ^PE_Context, allocator: mem.Allocator)
 {
 	ctx.allocator = allocator
-	ctx.buf_utf16 = make([dynamic]u16, 0, mem.Kilobyte * 32, allocator)
+	ctx.buf_utf16 = make([dynamic]u16, mem.Kilobyte * 32, mem.Kilobyte * 32, allocator)
+	ctx.imports   = make([dynamic]Import_Info, 0, 128, allocator)
+	ctx.strings   = make(map[string]u32, 128, allocator)
+
+	ctx.sections   = make([dynamic]Section_Header32, 0, 128, allocator)
+	ctx.text_data  = make([dynamic]byte, 0, mem.Kilobyte * 32, allocator)
+	ctx.data_data  = make([dynamic]byte, 0, mem.Kilobyte * 32, allocator)
+	ctx.rdata_data = make([dynamic]byte, 0, mem.Kilobyte * 32, allocator)
+	ctx.idata_data = make([dynamic]byte, 0, mem.Kilobyte * 32, allocator)
+
 	// Initialize DOS header
 	{
 		using ctx.dos_header;
@@ -246,7 +255,7 @@ add_import :: proc(ctx: ^PE_Context, dll_name: string, function_name: string)
 	// Create new import
 	import_info := Import_Info{
 		dll_name  = dll_name,
-		functions = make([dynamic]string, ctx.allocator),
+		functions = make([dynamic]string, 0, 128, ctx.allocator),
 	}
 	append(& import_info.functions, function_name)
 	append(& ctx.imports, import_info)
@@ -263,7 +272,8 @@ add_string_data :: proc(ctx: ^PE_Context, data: []byte) -> u32 {
 add_utf16_string :: proc(ctx: ^PE_Context, str: string) -> u32
 {
 	// Reserve buffer for UTF-16 conversion (worst case: 2x string length)
-	reserve(& ctx.buf_utf16, len(str) * 2)
+	clear(& ctx.buf_utf16)
+	resize(& ctx.buf_utf16, len(str) * 2)
 	// Convert UTF-8 to UTF-16
 	encoded_len := utf16.encode_string(ctx.buf_utf16[:], str)
 	rva         := cast(u32)len(ctx.rdata_data)
@@ -320,6 +330,7 @@ build_import_tables :: proc(ctx: ^PE_Context) -> (import_dir_rva: u32, iat_rva: 
 	if len(ctx.imports) == 0 do return 0, 0
 	
 	// Build import directory
+	// TODO(Ed): This shold be just kept in the context and reused.
 	import_descriptors := make([dynamic]Import_Descriptor, ctx.allocator)
 	
 	current_offset := cast(u32)len(ctx.idata_data)
@@ -452,6 +463,7 @@ encode :: proc(code: []byte, strs: []string, entry_point_offset: u32 = 0,
 
 	ctx: PE_Context
 	init_context(& ctx, allocator)
+	context.allocator = allocator
 	
 	// Add imports
 	for import_info in imports {

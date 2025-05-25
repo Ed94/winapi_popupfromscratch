@@ -13,18 +13,28 @@ $odin = 'odin.exe'
 
 $command_build = 'build'
 
-$flag_debug         = '-debug'
-$flag_file          = '-file'
-$flag_optimize_none = '-o:none'
-$flag_output_path   = '-out='
+$flag_debug                 = '-debug'
+$flag_file                  = '-file'
+$flag_dyn_map_calls         = '-dynamic-map-calls'
+$flag_no_bounds_check       = '-no-bounds-check'
+$flag_no_threaded_checker   = '-no-threaded-checker'
+$flag_no_type_assert        = '-no-type-assert'
+$flag_optimize_none         = '-o:none'
+$flag_output_path           = '-out='
+$flag_default_allocator_nil = '-default-to-nil-allocator'
 
 push-location $path_root
 $build_args = @()
 $build_args += $command_build
 $build_args += $path_source
 $build_args += $flag_file
-$build_args += $flag_debug
+# $build_args += $flag_debug
 $build_args += $flag_optimize_none
+$build_args += $flag_no_bounds_check
+$build_args += $flag_no_threaded_checker
+$build_args += $flag_no_type_assert
+$build_args += $flag_dyn_map_calls
+$build_args += $flag_default_allocator_nil
 $build_args += $flag_output_path + $exe
 & $odin $build_args
 & $exe

@@ -55,6 +55,7 @@ $includes = $path_zydis_lib
 $compiler_args = @()
 $compiler_args += $flag_all_c
 $compiler_args += ($flag_define + 'ZYDIS_STATIC_BUILD')
+$compiler_args += $flag_no_optimization
 
 $linker_args = @()
 $linker_args += $flag_link_win_subsystem_console

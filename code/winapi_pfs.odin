@@ -33,8 +33,9 @@ encode_instruction :: proc(mnemonic: zydis.Mnemonic, operands: []zydis.Encoder_O
 	buffer: [x64_INSTRUCTION_MAX_LENGTH]byte
 	length: c.size_t = x64_INSTRUCTION_MAX_LENGTH
 	status := zydis.EncoderEncodeInstruction(& request, raw_data(buffer[:]), & length)
-	if status != zydis.ZYAN_STATUS_SUCCESS {
-		fmt.printf("Zydis encoding failed with status: %d\n", status)
+	failed := (status & 0x80000000)
+	if failed > 0 {
+		fmt.printf("Zydis encoding failed for %v with status: 0x%X\n", mnemonic, status)
 		return nil
 	}
 	result := make([]byte, length, allocator)
