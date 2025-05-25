@@ -15,10 +15,10 @@ In powershell:
 
 ## Notable Repos
 
-[projectxiel/pe-from-scratch](https://github.com/projectxiel/pe-from-scratch)
-[jonomango/pe-builder](https://github.com/jonomango/pe-builder)
-[BackupGGCode/portable-executable-library](https://github.com/BackupGGCode/portable-executable-library)
-[eladraz/pe](https://github.com/eladraz/pe)
+[projectxiel/pe-from-scratch](https://github.com/projectxiel/pe-from-scratch)  
+[jonomango/pe-builder](https://github.com/jonomango/pe-builder)  
+[BackupGGCode/portable-executable-library](https://github.com/BackupGGCode/portable-executable-library)  
+[eladraz/pe](https://github.com/eladraz/pe)  
 [lief-project/LIEF](https://github.com/lief-project/LIEF)
 
 ## Articles
@@ -27,16 +27,13 @@ In powershell:
 
 * [Part 2](https://learn.microsoft.com/en-us/archive/msdn-magazine/2002/march/inside-windows-an-in-depth-look-into-the-win32-portable-executable-file-format-part-2)
 
-[PE Format Poster](https://www.openrce.org/reference_library/files/reference/PE%20Format.pdf)
-
-[A dive into the PE file format](https://0xrick.github.io/win-internals/pe1/)
-
+[PE Format Poster](https://www.openrce.org/reference_library/files/reference/PE%20Format.pdf)  
+[A dive into the PE file format](https://0xrick.github.io/win-internals/pe1/)  
 [Portable Executable File Format](https://blog.kowalczyk.info/articles/pefileformat.html)
 
 ## Docs
 
-[MSDN: PE Format](https://learn.microsoft.com/en-us/windows/win32/debug/pe-format?redirectedfrom=MSDN)
-
+[MSDN: PE Format](https://learn.microsoft.com/en-us/windows/win32/debug/pe-format?redirectedfrom=MSDN)  
 [doc.zydis](https://doc.zydis.re/v4.1.1/html/)
 
 * [Encoder](https://doc.zydis.re/v4.1.1/html/group__encoder)
