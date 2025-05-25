@@ -6,8 +6,8 @@ $devshell           = Join-Path $PSScriptRoot 'helpers/devshell.ps1'
 $vendor_toolchain   = Join-Path $PSScriptRoot 'helpers/vendor_toolchain.ps1'
 
 #region Arguments
-       $vendor       = $null
-       $release      = $null
+	$vendor       = $null
+	$release      = $null
 
 [array] $vendors = @( "clang", "msvc" )
 
